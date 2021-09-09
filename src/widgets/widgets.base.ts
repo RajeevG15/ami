@@ -1,3 +1,4 @@
+import THREE from "three";
 import WidgetsCss from './widgets.css';
 
 import {COLORS} from '../core/core.colors';

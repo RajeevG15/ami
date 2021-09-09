@@ -188,7 +188,7 @@ export default class ParsersDicom extends ParsersVolume {
 
   /**
    * Raw dataset
-   * 
+   *
    * @return {*}
    */
   rawHeader() {
@@ -673,14 +673,14 @@ export default class ParsersDicom extends ParsersVolume {
     return stackID;
   }
 
-  extractPixelData(frameIndex = 0) {
+  extractPixelData(frameIndex = 0, forceRGB = false) {
     // decompress
     let decompressedData = this._decodePixelData(frameIndex);
 
     let numberOfChannels = this.numberOfChannels();
 
     if (numberOfChannels > 1) {
-      return this._convertColorSpace(decompressedData);
+      return this._convertColorSpace(decompressedData, forceRGB);
     } else {
       return decompressedData;
     }
@@ -1153,7 +1153,7 @@ export default class ParsersDicom extends ParsersVolume {
     return rgbLikeTypes.indexOf(photometricInterpretation) !== -1;
   }
 
-  _convertColorSpace(uncompressedData) {
+  _convertColorSpace(uncompressedData, forceRGB) {
     let rgbData = null;
     let photometricInterpretation = this.photometricInterpretation();
     let planarConfiguration = this.planarConfiguration();
@@ -1164,7 +1164,7 @@ export default class ParsersDicom extends ParsersVolume {
 
     const interpretAsRGB = this._interpretAsRGB(photometricInterpretation);
 
-    if (interpretAsRGB && planarConfiguration === 0) {
+    if (forceRGB || (interpretAsRGB && planarConfiguration === 0)) {
       // ALL GOOD, ALREADY ORDERED
       // planar or non planar planarConfiguration
       rgbData = uncompressedData;
